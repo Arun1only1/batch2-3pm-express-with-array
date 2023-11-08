@@ -64,6 +64,40 @@ app.delete("/customers/delete", (req, res) => {
 
   return res.status(200).send({ message: "Customer is removed successfully." });
 });
+
+// update customer
+app.put("/customers/edit/:id", (req, res) => {
+  const userIdToBeEdited = Number(req.params.id);
+
+  const updatedValues = req.body;
+
+  // find if the customer with provided id exists
+  const customer = customers.find((item) => {
+    return item.id === userIdToBeEdited;
+  });
+
+  // if not customer, throw error
+
+  if (!customer) {
+    return res.status(404).send({ message: "Customer does not exist." });
+  }
+
+  // edit customer
+  const newCustomerList = customers.map((item, index, self) => {
+    // if (item.id === userIdToBeEdited) {
+    //   item = { ...item, ...updatedValues };
+    // }
+
+    // return item;
+
+    return item.id === userIdToBeEdited ? { ...item, ...updatedValues } : item;
+  });
+
+  // update old customer list with new customer list
+  customers = structuredClone(newCustomerList);
+
+  return res.status(200).send({ message: "Customer is updated successfully." });
+});
 const port = 8000;
 
 app.listen(port, () => {
